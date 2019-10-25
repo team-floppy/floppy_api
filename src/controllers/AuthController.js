@@ -12,7 +12,6 @@ module.exports = function authController(){
         var Options ={
             name:req.body.name,
             email:req.body.email,
-            publicId: mongoose.Types.ObjectId(),
             verificationCode: gen(),
             password:req.body.password,
         }

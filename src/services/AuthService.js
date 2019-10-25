@@ -1,5 +1,5 @@
 const model = require('../models/user');
-const bcrypt  = require('bcrypt')
+const bcrypt  = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const secret = process.env.Secret;
 exports.RegisterUser = (Options)=>{
@@ -10,7 +10,6 @@ exports.RegisterUser = (Options)=>{
          email:Options.email,
          password:hash,
          verificationCode:Options.verificationCode,
-         publicId:Options.publicId,
          verified:false,
          CreatedAt:new Date()
       }
