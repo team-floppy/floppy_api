@@ -1,6 +1,7 @@
 const model = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const secret = process.env.JWT_SECRET;
 const { sendMail } = require("../utils/sendemail");
 
 exports.RegisterUser = Options => {
@@ -64,7 +65,7 @@ function authenticateuser(username, password) {
       resolve({ success: false, message: "Login credentials can't be empty" });
     } else {
       model
-        .findOne({ email: username }, "")
+        .findOne({ username: username })
         .then(user => {
           if (!user) {
             resolve({ success: false, message: "user not found " });
@@ -77,7 +78,7 @@ function authenticateuser(username, password) {
             } else {
               const validPassword = bcrypt.compareSync(password, user.password);
               if (validPassword) {
-                getUserDetail(user, user.publicId).then(userdetail => {
+                getUserDetail(user).then(userdetail => {
                   generateToken(userdetail)
                     .then(token => {
                       resolve({
@@ -111,25 +112,26 @@ function authenticateuser(username, password) {
 }
 exports.authenticateuser = authenticateuser;
 
-function getUserDetail(user){
-    return new Promise((resolve, reject)=>{
-        model.findOne({_id:user._id}, {"-_id" : 0, "-__v" : 0}).then(data =>{
-            const specificUserDetail = {email: data.email  , name: data.name};
-                resolve(specificUserDetail);
-            }).catch(error => reject(error))
-    
-    })
-}
-
-function getUserDetail(user, Id) {
+function getUserDetail(user) {
   return new Promise((resolve, reject) => {
     model
-      .findOne({ publicId: Id }, { _id: 0, __v: 0 })
+      .findOne({ _id: user._id }, { "-_id": 0, "-__v": 0 })
+      .then(data => {
+        const specificUserDetail = { email: data.email, name: data.name };
+        resolve(specificUserDetail);
+      })
+      .catch(error => reject(error));
+  });
+}
+
+function getUserDetail(user) {
+  return new Promise((resolve, reject) => {
+    model
+      .findOne({ id:user._id }, { _id: 0, __v: 0 })
       .then(data => {
         const specificUserDetail = {
           email: user.email,
           name: user.name,
-          publicId: user.publicId
         };
         resolve(specificUserDetail);
       })
