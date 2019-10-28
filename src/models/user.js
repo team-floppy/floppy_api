@@ -21,10 +21,10 @@ const userSchema = new Schema({
   },
   verificationCode:{
     type:Number,
-    required:true,
   },
   verified: {
     type: Boolean,
+	required: true,
     default: false
   },
   role: {
@@ -32,11 +32,20 @@ const userSchema = new Schema({
     enum : ['user', 'comedian', 'admin'],
     default: 'user'
   }, 
-  preference: {
+  profilePic:{
+    type: String
+  },
+  Date: {
+    type: Date,
+    default: Date()
+  },
+  verificationCode:{
+    type: String,
+  },
+  prefernece: {
     type: String, 
     enum: ['cracks', 'anti-humor', 'black comedy', 'stand-up comedy', 'character comedy', 'improvisional comedy',
      'insult comedy', 'spoof', 'one-line joke', 'physical comedy', 'shock humor'],
-     required: true
   }
 });
 
