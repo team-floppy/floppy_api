@@ -1,29 +1,43 @@
 const mongoose = require("mongoose");
-Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 const userSchema = new Schema({
+  username:{
+    type: String,
+    required: true, 
+    unique: true
+  },
   name: {
-    type: String
+    type: String, 
+    required: true, 
   },
   email: {
     type: String,
-    required: true
+    required: true, 
+    unique: true
   },
   password: {
     type: String,
-    required: true
+    required: true, 
   },
   verificationCode:{
     type:Number,
-    required:true
+    required:true,
   },
   verified: {
     type: Boolean,
 	required: true,
     default: false
   },
-  publicId:
-  { type: mongoose.Types.ObjectId
-    
+  role: {
+    type: String,
+    enum : ['user', 'comedian', 'admin'],
+    default: 'user'
+  }, 
+  prefernece: {
+    type: String, 
+    enum: ['cracks', 'anti-humor', 'black comedy', 'stand-up comedy', 'character comedy', 'improvisional comedy',
+     'insult comedy', 'spoof', 'one-line joke', 'physical comedy', 'shock humor'],
+     required: true
   }
 });
 

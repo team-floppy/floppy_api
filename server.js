@@ -26,6 +26,6 @@ app.use(cors());
 app.use('/api', rootRouter);
 
 
-app.all('*', (req, res) => res.status(200).send({message : 'server is live'}));
+app.all('*', (req, res) => res.send({message : 'server is live'}));
 
 module.exports = app;
