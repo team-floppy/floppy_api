@@ -1,7 +1,7 @@
 const userService = require('../services/AuthService');
-var mongoose = require('mongoose');
-var rand = require('random-number');
-var gen = rand.generator({
+const mongoose = require('mongoose');
+const  rand = require('random-number');
+const gen = rand.generator({
   min:  1000
 , max:  100000
 , integer: true
@@ -11,14 +11,17 @@ module.exports = function authController(){
     this.register = (req,res, next)=>{
         var Options ={
             name:req.body.name,
+            username: req.body.username,
+            role: req.body.role,
+            preference: req.body.preference,
             email:req.body.email,
             verificationCode: gen(),
             password:req.body.password,
         }
         userService.RegisterUser(Options).then((data)=>{
-            res.json(data);
+            res.status(201).json(data);
         }).catch((err)=>{
-            res.json(err);
+            res.status(400).json(err);
         })
     }
 

@@ -1,7 +1,7 @@
 const model = require('../models/user');
 const bcrypt  = require('bcryptjs')
 const jwt = require('jsonwebtoken');
-const secret = process.env.Secret;
+const secret = process.env.JWT_SECRET;
 exports.RegisterUser = (Options)=>{
   return new Promise((resolve, reject)=>{
      let hash = bcrypt.hashSync(Options.password , 10);
@@ -14,7 +14,6 @@ exports.RegisterUser = (Options)=>{
          verified:false,
          role: Options.role, 
          preference: Options.preference,
-         CreatedAt:new Date()
       }
       model.findOne({email:u.email}).then(exists =>{
          if(exists){
@@ -37,31 +36,31 @@ exports.RegisterUser = (Options)=>{
   })
 }
 
+
 function authenticateuser(username, password){
     return new Promise((resolve, reject)=>{
         if(username.length == 0 || password.length == 0){
             resolve({ success:false , message:'authentication credentials incomplete'});
 
         }else{
-            model.findOne({email: username},'').then((user)=>{
+            model.findOne({username: username}).then((user)=>{
                 if(!user){
-                    resolve({success:false , message:'user not found '});
+                    resolve({success:false, message:'User not found '});
                 }else{
                 if(user.verified == false){
-                    resolve({success:false , message:'Please Verify your account '});
+                    resolve({success:false , message: 'Please Verify your account '});
                 }else{
                     const validPassword = bcrypt.compareSync(password, user.password);
                     if(validPassword){
-                        getUserDetail(user,user.publicId).then(userdetail =>{
+                        getUserDetail(user).then(userdetail =>{
                             generateToken(userdetail).then((token)=>{
-                                resolve({success:true , data: {user, token : token }, message: 'authentication successful'})
+                                resolve({success:true , message: 'authentication successful', data: user, token : token })
                             }).catch((err)=>{
                                 resolve({success: false, data:err, message:'could not authenticate user'})
                             })
-                            })
+                        })
                     }else{
-                        resolve({success: false, message:'incorrect email or password'})
- 
+                        resolve({success: false, message:'Incorrect email or password'})
                     }
                 }
             }
@@ -92,10 +91,10 @@ exports.verifyAccount = (email , Token)=>{
     })
 }
 
-function getUserDetail(user,Id){
+function getUserDetail(user){
     return new Promise((resolve, reject)=>{
-        model.findOne({publicId:Id}, {"_id" : 0, "__v" : 0}).then(data =>{
-            const specificUserDetail = {email: user.email  , name: user.name, publicId : user.publicId};
+        model.findOne({_id:user._id}, {"-_id" : 0, "-__v" : 0}).then(data =>{
+            const specificUserDetail = {email: data.email  , name: data.name};
                 resolve(specificUserDetail);
             }).catch(error => reject(error))
     

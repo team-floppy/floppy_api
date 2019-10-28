@@ -32,7 +32,7 @@ const userSchema = new Schema({
     enum : ['user', 'comedian', 'admin'],
     default: 'user'
   }, 
-  prefernece: {
+  preference: {
     type: String, 
     enum: ['cracks', 'anti-humor', 'black comedy', 'stand-up comedy', 'character comedy', 'improvisional comedy',
      'insult comedy', 'spoof', 'one-line joke', 'physical comedy', 'shock humor'],
