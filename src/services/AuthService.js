@@ -7,10 +7,13 @@ exports.RegisterUser = (Options)=>{
      let hash = bcrypt.hashSync(Options.password , 10);
       const u = {
          name:Options.name,
+         username: Options.username, 
          email:Options.email,
          password:hash,
          verificationCode:Options.verificationCode,
          verified:false,
+         role: Options.role, 
+         preference: Options.preference,
          CreatedAt:new Date()
       }
       model.findOne({email:u.email}).then(exists =>{

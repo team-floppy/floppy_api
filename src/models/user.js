@@ -9,7 +9,6 @@ const userSchema = new Schema({
   name: {
     type: String, 
     required: true, 
-    unique: true
   },
   email: {
     type: String,
@@ -19,7 +18,6 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true, 
-    unique: true
   },
   verificationCode:{
     type:Number,
@@ -29,6 +27,17 @@ const userSchema = new Schema({
     type: Boolean,
     default: false
   },
+  role: {
+    type: String,
+    enum : ['user', 'comedian', 'admin'],
+    default: 'user'
+  }, 
+  prefernece: {
+    type: String, 
+    enum: ['cracks', 'anti-humor', 'black comedy', 'stand-up comedy', 'character comedy', 'improvisional comedy',
+     'insult comedy', 'spoof', 'one-line joke', 'physical comedy', 'shock humor'],
+     required: true
+  }
 });
 
 module.exports = mongoose.model("users", userSchema);
