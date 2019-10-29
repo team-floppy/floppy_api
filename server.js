@@ -7,7 +7,6 @@ const router = express.Router();
 const rootRouter  = require('./src/routes/index.js')(router);
 const cors = require('cors');
 
-
 /**
  * Middlewares go here for the application.
  * if it gets to cumbersome then we can move to seperate file
