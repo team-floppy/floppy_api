@@ -176,3 +176,24 @@ function verifyToken(token = "") {
   });
 }
 exports.verifyToken = verifyToken;
+
+
+function verifyAccount(token){
+  return new Promise((resolve, reject) => {
+    verifyToken(token)
+      .then(decodedToken => {
+        model.findByIdAndUpdate(decodedToken.id, {verified: true}, (err, updated) => {
+          if(err){
+            reject({success: false,message: "Unable to update user"})
+          }else{
+            resolve({success: true, message: "User have been verified", data : updated})
+          }
+        })
+      })
+      .catch(err=> {
+        reject({success: false, message: "Invalid token"});
+      })
+  })
+}
+
+exports.verifyAccount = verifyAccount

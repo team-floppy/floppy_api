@@ -34,11 +34,9 @@ module.exports = function authController(){
     }
 
     this.VerifyUser = function(req, res){
-        const email = req.body.email
-        const Token = req.body.token
-        userService.verifyAccount(email , Token)
+        const token = req.params.token
+        userService.verifyAccount(token)
         .then(data => res.status(200).send(data))
-        .catch(err => res.status(500).send(err));
+        .catch(err => res.status(400).send(err));
     }
-  
 }

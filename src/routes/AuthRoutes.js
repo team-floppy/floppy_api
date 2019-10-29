@@ -10,6 +10,6 @@ module.exports = function() {
     authMiddleware.authenticate,
     authCtrl.authenticate
   );
-  router.post("/Verify", authCtrl.VerifyUser);
+  router.put("/Verify/:token", authCtrl.VerifyUser);
   return router;
 };
