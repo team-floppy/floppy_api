@@ -3,11 +3,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const secret = process.env.JWT_SECRET;
 const { sendMail } = require("../utils/sendemail");
+const { generateToken } = require("../utils/genToken");
 
 exports.RegisterUser = Options => {
   return new Promise((resolve, reject) => {
     let hash = bcrypt.hashSync(Options.password, 10);
-    const userdetails = {
+    const u = {
       name: Options.name,
       username: Options.username.toLowerCase(),
       email: Options.email.toLowerCase(),
@@ -17,25 +18,41 @@ exports.RegisterUser = Options => {
       role: Options.role
     };
     model
-      .findOne({ $or: [{ email: userdetails.email }, {username: userdetails.username}]})
+      .findOne({
+        $or: [{ email: userdetails.email }, { username: userdetails.username }]
+      })
       .then(exists => {
         if (exists && exists.email == userdetails.email) {
           reject({
             success: false,
             message: "Sorry user with email already exists"
           });
-        }else if(exists && exists.username == userdetails.username ){
+        } else if (exists && exists.username == userdetails.username) {
           reject({
             success: false,
             message: "Sorry user with this username already exists"
           });
         } else {
           model
-            .create(userdetails)
+            .create(u)
             .then(created => {
-              sendMail(userdetails)
-                .then(res => {})
-                .catch(err => {});
+              let payload = {
+                id: created._id,
+                email: created.email,
+                username: created.username
+              };
+              generateToken(payload).then((token) => {
+                sendMail(userdetails, token)
+                .then(res => {
+                  console.log("verification mail sent")
+                })
+                .catch(err => {
+                  console.log("Verification mail", err)
+                });
+              }).catch(err => {
+                console.log("Generating token")
+              })
+            
               if (created) {
                 resolve({
                   success: true,
@@ -110,7 +127,7 @@ function authenticateuser(username, password) {
           }
         })
         .catch(err => {
-          reject({err});
+          reject({ err });
         });
     }
   });
@@ -132,31 +149,17 @@ function getUserDetail(user) {
 function getUserDetail(user) {
   return new Promise((resolve, reject) => {
     model
-      .findOne({ id:user._id }, { _id: 0, __v: 0 })
+      .findOne({ id: user._id }, { _id: 0, __v: 0 })
       .then(data => {
         const specificUserDetail = {
           email: user.email,
-          name: user.name,
+          name: user.name
         };
         resolve(specificUserDetail);
       })
       .catch(error => reject(error));
   });
 }
-
-function generateToken(data = {}) {
-  return new Promise((resolve, reject) => {
-    jwt.sign({ ...data }, secret, { expiresIn: "24hrs" }, function(err, token) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(token);
-      }
-    });
-  });
-}
-
-exports.generateToken = generateToken;
 
 function verifyToken(token = "") {
   return new Promise((resolve, reject) => {
