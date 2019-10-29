@@ -21,7 +21,7 @@ module.exports = function authController(){
         userService.RegisterUser(Options).then((data)=>{
             res.status(201).json(data);
         }).catch((err)=>{
-            res.status(400).json(err);
+            res.status(400).json({err: "error"});
         })
     }
 

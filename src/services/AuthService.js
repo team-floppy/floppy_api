@@ -50,7 +50,7 @@ exports.RegisterUser = Options => {
                   console.log("Verification mail", err)
                 });
               }).catch(err => {
-                console.log("Generating token")
+                console.log("Generating token", err)
               })
             
               if (created) {
