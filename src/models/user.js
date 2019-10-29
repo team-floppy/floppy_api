@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
+  
   username:{
     type: String,
     required: true, 
@@ -48,5 +49,9 @@ const userSchema = new Schema({
      'insult comedy', 'spoof', 'one-line joke', 'physical comedy', 'shock humor'],
   }
 });
+
+// userSchema.pre("save", (User) => {
+//   console.log(User._id)
+// })
 
 module.exports = mongoose.model("users", userSchema);

@@ -2,11 +2,11 @@ const model = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { sendMail } = require("../utils/sendemail");
-
+const secret = process.env.Secret;
 exports.RegisterUser = Options => {
   return new Promise((resolve, reject) => {
     let hash = bcrypt.hashSync(Options.password, 10);
-    const userdetails = {
+    const u = {
       name: Options.name,
       username: Options.username,
       email: Options.email,
@@ -16,7 +16,7 @@ exports.RegisterUser = Options => {
       role: Options.role
     };
     model
-      .findOne({ email: userdetails.email })
+      .findOne({ email: u.email })
       .then(exists => {
         if (exists) {
           reject({
@@ -25,11 +25,9 @@ exports.RegisterUser = Options => {
           });
         } else {
           model
-            .create(userdetails)
+            .create(u)
             .then(created => {
-              sendMail(userdetails)
-                .then(res => {})
-                .catch(err => {});
+              sendMail(u)
               if (created) {
                 resolve({
                   success: true,
@@ -116,7 +114,6 @@ exports.verifyAccount = (email, Token) => {
     model
       .findOne({ $and: [{ email: email }, { verificationCode: Token }] })
       .then(data => {
-        console.log(data);
         if (data) {
           const userId = data._id;
           model.findByIdAndUpdate({ _id: userId }, { verified: true }, function(
@@ -128,7 +125,7 @@ exports.verifyAccount = (email, Token) => {
             resolve({ status: true, message: "User has been verified " });
           });
         } else {
-          resolve({ status: false, message: "Invalid link !!!" });
+          resolve({ status: false, message: "Invalid Code !!!" });
         }
       })
       .catch(err => {
