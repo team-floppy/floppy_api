@@ -8,7 +8,7 @@ const { generateToken } = require("../utils/genToken");
 exports.RegisterUser = Options => {
   return new Promise((resolve, reject) => {
     let hash = bcrypt.hashSync(Options.password, 10);
-    const userdetails = {
+    const u = {
       name: Options.name,
       username: Options.username.toLowerCase(),
       email: Options.email.toLowerCase(),
@@ -34,7 +34,7 @@ exports.RegisterUser = Options => {
           });
         } else {
           model
-            .create(userdetails)
+            .create(u)
             .then(created => {
               let payload = {
                 id: created._id,
