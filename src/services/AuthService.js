@@ -9,20 +9,25 @@ exports.RegisterUser = Options => {
     let hash = bcrypt.hashSync(Options.password, 10);
     const userdetails = {
       name: Options.name,
-      username: Options.username,
-      email: Options.email,
+      username: Options.username.toLowerCase(),
+      email: Options.email.toLowerCase(),
       password: hash,
       verificationCode: Options.verificationCode,
       verified: false,
       role: Options.role
     };
     model
-      .findOne({ email: userdetails.email })
+      .findOne({ $or: [{ email: userdetails.email }, {username: userdetails.username}]})
       .then(exists => {
-        if (exists) {
+        if (exists && exists.email == userdetails.email) {
           reject({
             success: false,
             message: "Sorry user with email already exists"
+          });
+        }else if(exists && exists.username == userdetails.username ){
+          reject({
+            success: false,
+            message: "Sorry user with this username already exists"
           });
         } else {
           model
@@ -46,7 +51,7 @@ exports.RegisterUser = Options => {
             .catch(err => {
               reject({
                 success: false,
-                message: null,
+                message: err.message,
                 data: null,
                 error: err.errors
               });
@@ -105,7 +110,7 @@ function authenticateuser(username, password) {
           }
         })
         .catch(err => {
-          reject(err);
+          reject({err});
         });
     }
   });

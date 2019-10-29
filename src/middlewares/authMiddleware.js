@@ -20,11 +20,11 @@ exports.authorize = (req, res, next) => {
 
 exports.signUp = (req, res, next) => {
   const schema = {
-    name: joi.string().min(3),
-    username: joi.string().min(3),
+    name: joi.string().min(3).required(),
+    username: joi.string().min(3).required(),
     role: joi.string(),
-    email: joi.string().email(),
-    password: joi.string(),
+    email: joi.string().email().required(),
+    password: joi.string().required(),
     preference: joi.string()
   };
   const result = validator(req.body, schema);

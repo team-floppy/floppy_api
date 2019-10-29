@@ -10,12 +10,11 @@ const gen = rand.generator({
 module.exports = function authController(){
     this.register = (req,res, next)=>{
         const Options ={
-            username: req.body.username,
             name:req.body.name,
-            username: req.body.username,
+            username: req.body.username.toLowerCase(),
             role: req.body.role,
             preference: req.body.preference,
-            email:req.body.email,
+            email:req.body.email.toLowerCase(),
             verificationCode: gen(),
             password:req.body.password,
         }
