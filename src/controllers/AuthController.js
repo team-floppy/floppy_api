@@ -11,10 +11,10 @@ module.exports = function authController(){
     this.register = (req,res, next)=>{
         const Options ={
             name:req.body.name,
-            username: req.body.username.toLowerCase(),
+            username: req.body.username.trim(),
             role: req.body.role,
             preference: req.body.preference,
-            email:req.body.email.toLowerCase(),
+            email:req.body.email.trim(),
             verificationCode: gen(),
             password:req.body.password,
         }
