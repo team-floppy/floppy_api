@@ -19,9 +19,11 @@ module.exports = function authController(){
             password:req.body.password,
         }
         userService.RegisterUser(Options).then((data)=>{
+            console.log(data)
             res.status(201).json(data);
         }).catch((err)=>{
-            res.status(400).json({err: "error"});
+            res.status(400).json(err);
+            console.log(err)
         })
     }
 
@@ -38,5 +40,10 @@ module.exports = function authController(){
         userService.verifyAccount(token)
         .then(data => res.status(200).send(data))
         .catch(err => res.status(400).send(err));
+    }
+    this.uploadAvatar = function(req, res){
+        userService.uploadAvatar()
+        .then(data => res.status(200).send(data))
+        .catch(err => res.status(200).send(err))
     }
 }

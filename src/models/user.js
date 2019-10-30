@@ -20,9 +20,6 @@ const userSchema = new Schema({
     type: String,
     required: true, 
   },
-  verificationCode:{
-    type:Number,
-  },
   verified: {
     type: Boolean,
 	required: true,

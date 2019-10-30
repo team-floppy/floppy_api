@@ -8,7 +8,7 @@ const { generateToken } = require("../utils/genToken");
 exports.RegisterUser = Options => {
   return new Promise((resolve, reject) => {
     let hash = bcrypt.hashSync(Options.password, 10);
-    const u = {
+    const userdetails = {
       name: Options.name,
       username: Options.username.toLowerCase(),
       email: Options.email.toLowerCase(),
@@ -34,7 +34,7 @@ exports.RegisterUser = Options => {
           });
         } else {
           model
-            .create(u)
+            .create(userdetails)
             .then(created => {
               let payload = {
                 id: created._id,
@@ -182,13 +182,20 @@ function verifyAccount(token){
   return new Promise((resolve, reject) => {
     verifyToken(token)
       .then(decodedToken => {
-        model.findByIdAndUpdate(decodedToken.id, {verified: true}, (err, updated) => {
-          if(err){
-            reject({success: false,message: "Unable to update user"})
-          }else{
-            resolve({success: true, message: "User have been verified", data : updated})
-          }
-        })
+        model.findById(decodedToken.id)
+          .then(value => {
+            if(value && value.verified == true){
+              resolve({success: true , message: "User have already been verified"})
+            }else{
+              model.findByIdAndUpdate(decodedToken.id, {verified: true}, (err, updated) => {
+                if(err){
+                  reject({success: false,message: "Unable to update user"})
+                }else{
+                  resolve({success: true, message: "User have been verified", data : updated})
+                }
+              })
+            }
+          })
       })
       .catch(err=> {
         reject({success: false, message: "Invalid token"});
@@ -197,3 +204,5 @@ function verifyAccount(token){
 }
 
 exports.verifyAccount = verifyAccount
+
+
