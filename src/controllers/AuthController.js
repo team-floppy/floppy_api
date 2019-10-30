@@ -28,7 +28,7 @@ module.exports = function authController(){
     }
 
     this.authenticate = function(req, res, next){
-        const username = req.body.username
+        const username = req.body.username.toLowerCase()
         const password = req.body.password
         userService.authenticateuser(username,password)
         .then(data => res.status(200).send(data))
