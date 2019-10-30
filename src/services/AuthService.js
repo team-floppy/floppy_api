@@ -1,9 +1,9 @@
 const model = require("../models/user");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const secret = process.env.JWT_SECRET;
+
 const { sendMail } = require("../utils/sendemail");
-const { generateToken } = require("../utils/genToken");
+const { generateToken, verifyToken } = require("../utils/JWT");
+
 
 exports.RegisterUser = Options => {
   return new Promise((resolve, reject) => {
@@ -105,7 +105,8 @@ function authenticateuser(username, password) {
                     .then(token => {
                       resolve({
                         success: true,
-                        data: { user, token: token },
+                        data: userdetail,
+                        token: token ,
                         message: "authentication successful"
                       });
                     })
@@ -137,45 +138,16 @@ exports.authenticateuser = authenticateuser;
 function getUserDetail(user) {
   return new Promise((resolve, reject) => {
     model
-      .findOne({ _id: user._id }, { "-_id": 0, "-__v": 0 })
+      .findOne({ _id: user._id }, { __v: 0, password: 0})
       .then(data => {
-        const specificUserDetail = { email: data.email, name: data.name };
+        const specificUserDetail = { email: data.email, username: data.username, id: data._id , role: data.role};
         resolve(specificUserDetail);
       })
       .catch(error => reject(error));
   });
 }
 
-function getUserDetail(user) {
-  return new Promise((resolve, reject) => {
-    model
-      .findOne({ id: user._id }, { _id: 0, __v: 0 })
-      .then(data => {
-        const specificUserDetail = {
-          email: user.email,
-          name: user.name
-        };
-        resolve(specificUserDetail);
-      })
-      .catch(error => reject(error));
-  });
-}
 
-function verifyToken(token = "") {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token.replace("Bearer", ""), secret, function(
-      err,
-      decodedToken
-    ) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(decodedToken);
-      }
-    });
-  });
-}
-exports.verifyToken = verifyToken;
 
 
 function verifyAccount(token){
@@ -198,7 +170,7 @@ function verifyAccount(token){
           })
       })
       .catch(err=> {
-        reject({success: false, message: "Invalid token"});
+        reject({success: false, message: "Invalid token", error: err});
       })
   })
 }
