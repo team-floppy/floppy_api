@@ -11,5 +11,7 @@ module.exports = function() {
     authCtrl.authenticate
   );
   router.put("/Verify/:token", authCtrl.VerifyUser);
+  router.put("/follow/:id", authMiddleware.authorizeAll, authCtrl.followComedian)
+  router.get("/followers/:id", authMiddleware.authorizeComedian, authCtrl.getFollowers) 
   return router;
 };

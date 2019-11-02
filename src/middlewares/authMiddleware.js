@@ -58,6 +58,19 @@ exports.authorizeAdmin = (req, res, next) => {
       return res.status(401).json({success: false, message: 'Access denied!!', error : err.message})
     })
 }
+
+exports.authorizeAll = (req, res, next) => {
+  const token = req.headers['x-access-token'];
+  if(!token) return res.status(400).json({success: false, message: "No token provided"})
+  verifyToken(token)
+    .then(decodedToken => {
+      const user = {email: decodedToken.email, id: decodedToken.id, username: decodedToken.username, role: decodedToken.role}
+      req.user = user
+      next();
+    }).catch(err => {
+      return res.status(401).json({success: false, message: 'Access denied!!', error : err.message})
+    })
+}
 exports.signUp = (req, res, next) => {
   const schema = {
     name: joi.string().min(3).required(),

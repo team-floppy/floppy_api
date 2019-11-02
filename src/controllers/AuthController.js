@@ -41,4 +41,20 @@ module.exports = function authController(){
         .then(data => res.status(200).send(data))
         .catch(err => res.status(400).send(err));
     }
+
+    this.followComedian = function(req, res){
+        const user = req.user
+        const comedianId = req.params.id
+        userService.followComedian(user.id, comedianId)
+        .then(data => res.status(200).send(data))
+        .catch(err => res.status(500).send(err))
+    }
+    
+    this.getFollowers = function(req, res){
+        const comedianId = req.params.id;
+        userService.getFollowers(comedianId)
+        .then(data => res.status(200).json(data))
+        .catch(err => res.status(500).json(err))
+    }
 }
+
