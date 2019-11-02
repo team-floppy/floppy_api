@@ -2,9 +2,9 @@ const model = require("../models/user");
 const followModel = require('../models/follow');
 const bcrypt = require("bcryptjs");
 
+const {deleteOne, getProfile} = require("../../bin/config/gridfsStream")
 const { sendMail } = require("../utils/sendemail");
 const { generateToken, verifyToken } = require("../utils/JWT");
-
 
 exports.RegisterUser = Options => {
   return new Promise((resolve, reject) => {
@@ -42,18 +42,20 @@ exports.RegisterUser = Options => {
                 email: created.email,
                 username: created.username
               };
-              generateToken(payload).then((token) => {
-                sendMail(userdetails, token)
-                .then(res => {
-                  console.log("verification mail sent")
+              generateToken(payload)
+                .then(token => {
+                  sendMail(userdetails, token)
+                    .then(res => {
+                      console.log("verification mail sent");
+                    })
+                    .catch(err => {
+                      console.log("Verification mail", err);
+                    });
                 })
                 .catch(err => {
-                  console.log("Verification mail", err)
+                  console.log("Generating token", err);
                 });
-              }).catch(err => {
-                console.log("Generating token")
-              })
-            
+
               if (created) {
                 resolve({
                   success: true,
@@ -107,7 +109,7 @@ function authenticateuser(username, password) {
                       resolve({
                         success: true,
                         data: userdetail,
-                        token: token ,
+                        token: token,
                         message: "authentication successful"
                       });
                     })
@@ -139,41 +141,112 @@ exports.authenticateuser = authenticateuser;
 function getUserDetail(user) {
   return new Promise((resolve, reject) => {
     model
-      .findOne({ _id: user._id }, { __v: 0, password: 0})
+      .findOne({ _id: user._id }, { __v: 0, password: 0 })
       .then(data => {
-        const specificUserDetail = { email: data.email, username: data.username, id: data._id , role: data.role};
+        const specificUserDetail = {
+          email: data.email,
+          username: data.username,
+          id: data._id,
+          role: data.role
+        };
         resolve(specificUserDetail);
       })
       .catch(error => reject(error));
   });
 }
 
+ function uploadProfilePic(fileDetails) {
+  return new Promise((resolve, reject) => {
+    if (!fileDetails) {
+      reject({ success: false, message: "Unable to update Profile picture" });
+    } else {
+      model.findOneAndUpdate(
+        { email: fileDetails.email },
+        { profilePic: fileDetails.filename, profilePicID: fileDetails.id },
+        (err, updated) => {
+          if (err) {
+            reject({
+              success: false,
+              message: "error updating profile picture mongoose"
+            });
+          } else {
+            deleteOne(updated.profilePicID).then(res => {
+              resolve({
+                success: true,
+                message: "Profile picture updated",
+                data: null
+              });
+            }).catch((err) => {
+              reject({
+                success: false,
+                message: "error removing file from grid fs",
+                data: err
+              });
+            })
+           
+          }
+        }
+      );
+    }
+  });
+}
+
+exports.uploadProfilePic = uploadProfilePic;
 
 
+function getProfilePicture(id){
+  return new Promise((resolve, reject) => {
+    getProfile(id).then((result) => {
+      resolve({
+        success: true,
+        message: result,
+        data: null
+      })
+    }).catch((err) => {
+      reject({
+        success: false,
+        message: "Error from getting image",
+        error: err
+      })
+    })
+  })
+}
 
-function verifyAccount(token){
+exports.getProfilePicture = getProfilePicture
+
+function verifyAccount(token) {
   return new Promise((resolve, reject) => {
     verifyToken(token)
       .then(decodedToken => {
-        model.findById(decodedToken.id)
-          .then(value => {
-            if(value && value.verified == true){
-              resolve({success: true , message: "User have already been verified"})
-            }else{
-              model.findByIdAndUpdate(decodedToken.id, {verified: true}, (err, updated) => {
-                if(err){
-                  reject({success: false,message: "Unable to update user"})
-                }else{
-                  resolve({success: true, message: "User have been verified", data : updated})
+        model.findById(decodedToken.id).then(value => {
+          if (value && value.verified == true) {
+            resolve({
+              success: true,
+              message: "User have already been verified"
+            });
+          } else {
+            model.findByIdAndUpdate(
+              decodedToken.id,
+              { verified: true },
+              (err, updated) => {
+                if (err) {
+                  reject({ success: false, message: "Unable to update user" });
+                } else {
+                  resolve({
+                    success: true,
+                    message: "User have been verified",
+                    data: updated
+                  });
                 }
-              })
-            }
-          })
+              }
+            );
+          }
+        });
       })
-      .catch(err=> {
-        reject({success: false, message: "Invalid token", error: err});
-      })
-  })
+      .catch(err => {
+        reject({ success: false, message: "Invalid token", error: err });
+      });
+  });
 }
 exports.verifyAccount = verifyAccount
 

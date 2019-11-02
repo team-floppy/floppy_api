@@ -30,11 +30,16 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum : ['viewer', 'comedian', 'admin'],
-    default: 'viewer'
+    enum : ['user', 'comedian', 'admin'],
+    default: 'user'
   }, 
   profilePic:{
-    type: String
+    type: String,
+    default: "none"
+  },
+  profilePicID:{
+    type: String,
+    default: "none"
   },
   Date: {
     type: Date,
@@ -50,8 +55,5 @@ const userSchema = new Schema({
   }
 });
 
-// userSchema.pre("save", (User) => {
-//   console.log(User._id)
-// })
 
 module.exports = mongoose.model("users", userSchema);

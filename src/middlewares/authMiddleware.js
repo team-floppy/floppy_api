@@ -1,6 +1,8 @@
 const joi = require("joi");
 const validator = require("../validators");
 const {verifyToken} = require('../utils/JWT')
+
+
 exports.authenticate = (req, res, next) => {
   //Logic for authentication goes in here
   const schema = {
@@ -21,7 +23,7 @@ exports.authorizeViewer = (req, res, next) => {
   if(!token) return res.status(400).json({success: false, message: "No token provided"})
   verifyToken(token)
     .then(decodedToken => {
-      if(decodedToken.role !== 'viewer') return res.status(401).json({success: false, message: "Access denied !!!"})
+      if(decodedToken.role !== 'user') return res.status(401).json({success: false, message: "Access denied !!!"})
       const user = {email: decodedToken.email, id: decodedToken.id, username: decodedToken.username, role: decodedToken.role}
       req.user = user
       next()
