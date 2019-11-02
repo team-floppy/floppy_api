@@ -1,6 +1,5 @@
 const model = require("../models/user");
 const followModel = require("../models/follow");
-
 const { deleteOne, getProfile } = require("../../bin/config/gridfsStream");
 
 function uploadProfilePic(fileDetails) {

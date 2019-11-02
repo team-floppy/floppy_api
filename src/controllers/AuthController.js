@@ -1,11 +1,4 @@
 const AuthService = require("../services/AuthService");
-const mongoose = require("mongoose");
-const {
-  findOne,
-  deleteOne,
-  getProfile
-} = require("../../bin/config/gridfsStream.js");
-
 const rand = require("random-number");
 const gen = rand.generator({
   min: 1000,

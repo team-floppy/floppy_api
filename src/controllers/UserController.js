@@ -1,10 +1,5 @@
 const userService = require("../services/UserService");
-const mongoose = require("mongoose");
-const {
-  findOne,
-  deleteOne,
-  getProfile
-} = require("../../bin/config/gridfsStream.js");
+const { getProfile } = require("../../bin/config/gridfsStream.js");
 
 module.exports = function userController() {
   this.uploadAvatar = function(req, res) {
