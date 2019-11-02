@@ -1,4 +1,4 @@
-const userService = require("../services/AuthService");
+const AuthService = require("../services/AuthService");
 const mongoose = require("mongoose");
 const {
   findOne,
@@ -24,8 +24,7 @@ module.exports = function authController() {
       verificationCode: gen(),
       password: req.body.password
     };
-    userService
-      .RegisterUser(Options)
+    AuthService.RegisterUser(Options)
       .then(data => {
         console.log(data);
         res.status(201).json(data);
@@ -39,50 +38,22 @@ module.exports = function authController() {
   this.authenticate = function(req, res, next) {
     const username = req.body.username.toLowerCase();
     const password = req.body.password;
-    userService
-      .authenticateuser(username, password)
+    AuthService.authenticateuser(username, password)
       .then(data => res.status(200).send(data))
       .catch(err => res.status(500).send(err));
   };
 
   this.VerifyUser = function(req, res) {
     const token = req.params.token;
-    userService
-      .verifyAccount(token)
+    AuthService.verifyAccount(token)
       .then(data => res.status(200).send(data))
       .catch(err => res.status(400).send(err));
   };
-  this.uploadAvatar = function(req, res) {
-    userService
-      .uploadProfilePic({ ...req.user, ...req.file })
-      .then(data => {
-        res.status(200).send(data);
-      })
-      .catch(err => {
-        res.status(200).send(err);
-      });
+
+  this.VerifyUser = function(req, res) {
+    const token = req.params.token;
+    AuthService.verifyAccount(token)
+      .then(data => res.status(200).send(data))
+      .catch(err => res.status(400).send(err));
   };
-
-    this.VerifyUser = function(req, res){
-        const token = req.params.token
-        userService.verifyAccount(token)
-        .then(data => res.status(200).send(data))
-        .catch(err => res.status(400).send(err));
-    }
-
-    this.followComedian = function(req, res){
-        const user = req.user
-        const comedianId = req.params.id
-        userService.followComedian(user.id, comedianId)
-        .then(data => res.status(200).send(data))
-        .catch(err => res.status(500).send(err))
-    }
-    
-    this.getFollowers = function(req, res){
-        const comedianId = req.params.id;
-        userService.getFollowers(comedianId)
-        .then(data => res.status(200).json(data))
-        .catch(err => res.status(500).json(err))
-    }
-}
-
+};
