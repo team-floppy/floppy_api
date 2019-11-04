@@ -14,13 +14,6 @@ const videoSchema = new Schema({
     type: Number,
     default: 0
   },
-  likes: {
-    type: Number,
-    default: 0
-  },
-  usersLikesId: {
-    type: Array
-  },
   uploadedBy: {
     type: String,
     required: true
@@ -30,9 +23,9 @@ const videoSchema = new Schema({
     default: Date()
   },
   videoTags: {
-    type: String,
+    type: Array,
     default: []
   }
 });
 
-module.exports = mongoose.model("Videos", videoSchema);
+module.exports = mongoose.model("VideosDetail", videoSchema);
