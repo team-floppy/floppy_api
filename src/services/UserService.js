@@ -105,7 +105,7 @@ function followComedian(followerId, IdOfComedian) {
                           reject({
                             success: false,
                             message:
-                              "There was a problem following the comedian 1"
+                              "There was a problem following the comedian"
                           });
                         });
                     }
@@ -114,7 +114,7 @@ function followComedian(followerId, IdOfComedian) {
                     reject({
                       success: false,
                       message:
-                        "There was an error trying to follow the comedian 2"
+                        "There was an error trying to follow the comedian"
                     });
                   });
               }
@@ -122,7 +122,7 @@ function followComedian(followerId, IdOfComedian) {
             .catch(err => {
               reject({
                 success: false,
-                message: "There was an error going to follow the comedian 3"
+                message: "There was an error going to follow the comedian"
               });
               console.log(err);
             });
@@ -140,7 +140,7 @@ function followComedian(followerId, IdOfComedian) {
             user.save();
             resolve({
               success: true,
-              message: "Comedian have been followed successfully 2"
+              message: "Comedian have been followed successfully"
             });
           }
         }
@@ -148,12 +148,56 @@ function followComedian(followerId, IdOfComedian) {
       .catch(err => {
         reject({
           success: false,
-          message: "There was an error trying to  follow the comedian 4"
+          message: "There was an error trying to  follow the comedian"
         });
       });
   });
 }
 exports.followComedian = followComedian;
+
+
+
+function unfollowComedian(comedianId, followerId){
+  return new Promise((resolve, reject) => {
+    if(!comedianId){
+      resolve({success: false, message: "No comedian Id provided"})
+    }else{
+      model.findById(comedianId)
+      .then(value => {
+        if(value && value.role === "comedian"){
+          followModel.findOne({comedian : comedianId})
+          .then(value => {
+            if(value){
+              const deFollowerIndex = value.followers.findIndex(elem =>elem.userId == followerId)
+              if(deFollowerIndex !== -1){
+                value.followers.splice(deFollowerIndex, 1)
+                value.save()
+                resolve({success: true, message: "Comedian have been unfollowed successfully", data: null})
+              }else{
+                resolve({success: false, message: "User have not yet followed this comedian"})
+              }
+            }else{
+              resolve({success: false, message: "User have not yet followed the comedian"})
+            }
+          }).catch(err => {
+            console.log("ERROR----------------------")
+            console.error(err)
+            reject({success: false, message: "There was an error tring to unfollow this comedian 2"})
+          })
+        }else{
+          resolve({success: false, message: "Comedian does not exist"})
+        }
+      }).catch(err => {
+        console.log("ERROR----------------------")
+        console.error(err)
+        reject({success: false, message: "There was an error trying to unfollow this comedian 3",})
+      })
+    }
+  })
+}
+
+exports.unfollowComedian = unfollowComedian
+
 
 function getFollowers(comedianId) {
   return new Promise((resolve, reject) => {
@@ -176,7 +220,7 @@ function getFollowers(comedianId) {
         }
       })
       .catch(err => {
-        reject({ success: false, message: "" });
+        reject({ success: false, message: "There was an error tring to find the find the followers" });
       });
   });
 }

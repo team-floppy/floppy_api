@@ -8,7 +8,7 @@ module.exports = function() {
   const userCtrl = new userController();
   router.post(
     "/upload/avatar",
-    authMiddleware.authorizeViewer,
+    authMiddleware.authorizeAll,
     upload,
     userCtrl.uploadAvatar
   );
@@ -21,6 +21,11 @@ module.exports = function() {
     userCtrl.followComedian
   );
 
+  router.put(
+    "/unfollow/:id",
+    authMiddleware.authorizeAll,
+    userCtrl.unfollowComedian
+  );
   router.get(
     "/followers/:id",
     authMiddleware.authorizeComedian,

@@ -19,7 +19,7 @@ module.exports = function init() {
                 else {
                      gfs = Grid(uri, mongoose.mongo);
                     console.log("Sucessfully connected to MongoDB");
-                }
+                }  
             }
 
         );
