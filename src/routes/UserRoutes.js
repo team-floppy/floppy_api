@@ -1,17 +1,21 @@
 const userController = require("../controllers/UserController");
-const { upload } = require("../../bin/config/gridFsStorage");
+const { uploadProfilePic } = require("../../bin/config/gridFsStorage");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 const router = require("express").Router();
 
 module.exports = function() {
   const userCtrl = new userController();
+
+  /**Upload profile picture route */
   router.post(
     "/upload/avatar",
     authMiddleware.authorizeViewer,
-    upload,
+    uploadProfilePic,
     userCtrl.uploadAvatar
   );
+
+  /**View profile picture route */
 
   router.get("/avatar/:id", userCtrl.viewProfilePic);
 

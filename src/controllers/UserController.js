@@ -1,5 +1,5 @@
 const userService = require("../services/UserService");
-const { getProfile } = require("../../bin/config/gridfsStream.js");
+const { getProfile } = require("../utils/gridfsStream");
 
 module.exports = function userController() {
   this.uploadAvatar = function(req, res) {
@@ -14,9 +14,13 @@ module.exports = function userController() {
   };
 
   this.viewProfilePic = function(req, res) {
-    getProfile(req.params.id)
-      .then(result => {
-        result.pipe(res);
+    getProfile(req.params.id, 'profilePictures')
+      .then(readStream => {
+          console.log(readStream)
+        readStream.gfs.pipe(res);
+        readStream.gfs.on("data", () => {
+            console.log("data is coming")
+        })
       })
       .catch(err => {
         res.send(err);

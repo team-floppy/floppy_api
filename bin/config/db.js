@@ -1,8 +1,6 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const uri = process.env.DB_URI;
-const Grid = require('gridfs-stream');
 
-let gfs;
 
 module.exports = function init() {
     if (uri) {
@@ -17,7 +15,6 @@ module.exports = function init() {
                     console.log("Database connection failed");
                 }
                 else {
-                     gfs = Grid(uri, mongoose.mongo);
                     console.log("Sucessfully connected to MongoDB");
                 }
             }
@@ -27,8 +24,6 @@ module.exports = function init() {
         throw new Error("DB URI not found, please kindly check your connection strings to mongoose");
     }
 }
-
-exports.gfs = gfs;
 
 /**
  * Seeding logic for database should go here

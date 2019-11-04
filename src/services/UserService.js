@@ -1,11 +1,12 @@
 const model = require("../models/user");
 const followModel = require("../models/follow");
-const { deleteOne, getProfile } = require("../../bin/config/gridfsStream");
+const videoModel = require("../models/videos");
+const { deleteOne, getProfile } = require("../utils/gridfsStream");
 
 function uploadProfilePic(fileDetails) {
   return new Promise((resolve, reject) => {
     if (!fileDetails) {
-      reject({ success: false, message: "Unable to update Profile picture" });
+      reject({ success: false, message: "Unable to update Profile picture", err: "No file details is provided" });
     } else {
       model.findOneAndUpdate(
         { email: fileDetails.email },
@@ -17,7 +18,7 @@ function uploadProfilePic(fileDetails) {
               message: "error updating profile picture mongoose"
             });
           } else {
-            deleteOne(updated.profilePicID)
+            deleteOne(updated.profilePicID, 'profilePictures')
               .then(res => {
                 resolve({
                   success: true,
@@ -176,7 +177,11 @@ function getFollowers(comedianId) {
         }
       })
       .catch(err => {
-        reject({ success: false, message: "" });
+        reject({
+          success: false,
+          message: "Error Fetching getting comedian",
+          error: err
+        });
       });
   });
 }
