@@ -4,10 +4,11 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 module.exports = function() {
   this.uploadVideo = (req, res, next) => {
+    console.log(req.file, req.user);
     const videoDetails = {
-      videoId: req.file.id,
       fileName: req.body.fileName,
-      uploadedBy: req.user.username,
+      username: req.user.username,
+      videoId: req.file.id,
       videoTags: req.body.videoTags
     };
     videoService
@@ -45,7 +46,6 @@ module.exports = function() {
   this.streamvideo = (req, res) => {
     streamVideo(req.params.id, req.headers["range"])
       .then(result => {
-        console.log(result);
         if (req.headers["range"]) {
           res.writeHead(206, {
             "Content-Range":
@@ -63,10 +63,8 @@ module.exports = function() {
           result.gfs.on("end", () => {
             videoService
               .addView(req.params.id)
-              .then(viewResult => {
-              })
-              .catch(error => {
-              });
+              .then(viewResult => {})
+              .catch(error => {});
           });
         } else {
           res.header("Content-Length", result.contentLength);

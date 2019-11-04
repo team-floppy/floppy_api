@@ -2,6 +2,7 @@ const videoModel = require("../models/videos");
 const { deleteOne, getProfile } = require("../utils/gridfsStream");
 
 function uploadVideo(videoDetail) {
+  console.log(videoDetail);
   return new Promise((resolve, reject) => {
     if (!videoDetail) {
       reject({
@@ -12,7 +13,7 @@ function uploadVideo(videoDetail) {
       });
     } else {
       const videoDetails = {
-        videoId: videoDetail.id,
+        videoId: videoDetail.videoId,
         fileName: videoDetail.fileName,
         uploadedBy: videoDetail.username,
         videoTags: videoDetail.videoTags
