@@ -16,7 +16,7 @@ module.exports = function init() {
                 }
                 else {
                     console.log("Sucessfully connected to MongoDB");
-                }
+                }  
             }
 
         );

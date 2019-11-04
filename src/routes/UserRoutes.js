@@ -10,8 +10,8 @@ module.exports = function() {
   /**Upload profile picture route */
   router.post(
     "/upload/avatar",
-    authMiddleware.authorizeViewer,
-    uploadProfilePic,
+    authMiddleware.authorizeAll,
+    upload,
     userCtrl.uploadAvatar
   );
 
@@ -25,6 +25,11 @@ module.exports = function() {
     userCtrl.followComedian
   );
 
+  router.put(
+    "/unfollow/:id",
+    authMiddleware.authorizeAll,
+    userCtrl.unfollowComedian
+  );
   router.get(
     "/followers/:id",
     authMiddleware.authorizeComedian,

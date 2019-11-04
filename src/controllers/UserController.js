@@ -3,6 +3,7 @@ const { getProfile } = require("../utils/gridfsStream");
 
 module.exports = function userController() {
   this.uploadAvatar = function(req, res) {
+    console.log(req.file);
     userService
       .uploadProfilePic({ ...req.user, ...req.file })
       .then(data => {
@@ -32,9 +33,17 @@ module.exports = function userController() {
     const comedianId = req.params.id;
     userService
       .followComedian(user.id, comedianId)
-      .then(data => res.status(200).send(data))
-      .catch(err => res.status(500).send(err));
+      .then(data => res.status(200).json(data))
+      .catch(err => res.status(500).json(err));
   };
+  this.unfollowComedian = function(req, res){
+    const user = req.user;
+    const comedianId = req.params.id;
+    userService
+      .unfollowComedian(comedianId, user.id)
+      .then(data => res.status(200).json(data))
+      .catch(err => res.status(500).json(err))
+  }
 
   this.getFollowers = function(req, res) {
     const comedianId = req.params.id;
