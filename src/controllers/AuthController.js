@@ -44,11 +44,4 @@ module.exports = function authController() {
       .then(data => res.status(200).send(data))
       .catch(err => res.status(400).send(err));
   };
-
-  this.VerifyUser = function(req, res) {
-    const token = req.params.token;
-    AuthService.verifyAccount(token)
-      .then(data => res.status(200).send(data))
-      .catch(err => res.status(400).send(err));
-  };
 };
