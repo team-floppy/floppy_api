@@ -9,7 +9,7 @@ const bookModel = new Schema({
     },
     books: [
         {
-            bookerId: {type: Schema.Types.ObjectId, required: true, unique: true}, 
+            bookerId: {type: Schema.Types.ObjectId, required: true}, 
             workType: {type: String, required: true}, 
             description: {type: String, required: true}
         }

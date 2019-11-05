@@ -173,10 +173,10 @@ function followComedian(followerId, IdOfComedian) {
       if(!bookerId ||  !comedianId ||  !bookDetails){
         resolve({success: false, message: "Invalid inputs"});
       }else{
-        model.findById({comedian: comedianId})
+        model.findById(comedianId)
             .then(value => {
-                if(value && comedianId.role == "comedian"){
-                    bookModel.findById(comedianId)
+                if(value && value.role == "comedian"){
+                    bookModel.findOne({comedian: comedianId})
                     .then(comedian => {
                         if(comedian){
                             comedian.books.push({
@@ -184,32 +184,34 @@ function followComedian(followerId, IdOfComedian) {
                                 workType: bookDetails.workType,
                                 description: bookDetails.description
                             })
-                            comedian.save()
+                            comedian.save();
+                            resolve({success: true, message : "Comedian have been booked successfully"})
                         }else{
                             let book = new  bookModel({
                                 comedian : comedianId, 
-                                description: [
+                                books: [
                                     {
                                         bookerId: bookerId,
-                                        workType: bookDetails.workTYpe, 
+                                        workType: bookDetails.workType, 
                                         description: bookDetails.description
                                     }
                                 ]
                             })
                             book.save().then(val => {
-                                resolve({success: true, message: "Comedian have been booked already"})
+                                resolve({success: true, message: "Comedian have been booked successfully"})
                             }).catch(err => {
-                                reject({success: false, message: "There was an error trying to book this comedian"})
+                                console.log(err)
+                                reject({success: false, message: "There was an error trying to book this comedian 1"})
                             })
                         }
                     }).catch(err => {
-                        reject({success: false, message: "There was an error trying to follow this comedian"})
+                        reject({success: false, message: "There was an error trying to book this comedian 2"})
                     })
                 }else{
-                    reject({success: false, message: "Comedian does not exist"})
+                    resolve({success: false, message: "Comedian does not exist"})
                 }
             }).catch(err => {
-                reject({success: false, message: "There was an error trying to beeok the comedian"})
+                reject({success: false, message: "There was an error trying to book the comedian 3"})
             })
       }
     })

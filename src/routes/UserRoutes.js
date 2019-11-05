@@ -1,6 +1,7 @@
 const userController = require("../controllers/UserController");
 const { uploadProfilePic } = require("../../bin/config/gridFsStorage");
 const authMiddleware = require("../middlewares/authMiddleware");
+const userMiddleware = require("../middlewares/userMiddleware.js");
 
 const router = require("express").Router();
 
@@ -11,7 +12,7 @@ module.exports = function() {
   router.post(
     "/upload/avatar",
     authMiddleware.authorizeAll,
-    uploadProfilePic, 
+    uploadProfilePic,
     userCtrl.uploadAvatar
   );
 
@@ -36,7 +37,12 @@ module.exports = function() {
     userCtrl.getFollowers
   );
 
-  router.post("/book/:id", )
+  router.post(
+    "/book/:id",
+    userMiddleware.validateDetails,
+    authMiddleware.authorizeAll,
+    userCtrl.bookComedian
+  );
 
   return router;
 };
