@@ -11,6 +11,7 @@ module.exports = function() {
   router.post(
     "/upload/avatar",
     authMiddleware.authorizeAll,
+    uploadProfilePic, 
     userCtrl.uploadAvatar
   );
 
