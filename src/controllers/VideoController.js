@@ -9,8 +9,9 @@ module.exports = function() {
       fileName: req.body.fileName,
       username: req.user.username,
       videoId: req.file.id,
-      videoTags: req.body.videoTags
+      videoTags: ["Igbo", "Hausa"]
     };
+
     videoService
       .uploadVideo(videoDetails)
       .then(result => {

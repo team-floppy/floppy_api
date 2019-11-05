@@ -11,7 +11,7 @@ module.exports = function() {
   router.post(
     "/upload/avatar",
     authMiddleware.authorizeAll,
-    upload,
+    uploadProfilePic,
     userCtrl.uploadAvatar
   );
 
@@ -34,6 +34,7 @@ module.exports = function() {
     "/followers/:id",
     authMiddleware.authorizeComedian,
     userCtrl.getFollowers
+
   );
   return router;
 };

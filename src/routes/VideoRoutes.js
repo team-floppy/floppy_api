@@ -28,8 +28,8 @@ module.exports = function() {
   /**Add view */
   router.put("/add/views/:id", authMiddleware.authorizeAll, videoCtrl.addView);
 
-/**Stream */
-  router.get("/watch/:id",  videoCtrl.streamvideo)
+  /**Stream */
+  router.get("/watch/:id", videoCtrl.streamvideo);
 
   return router;
 };
