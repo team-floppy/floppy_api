@@ -30,6 +30,8 @@ module.exports = function() {
     authMiddleware.authorizeAll,
     userCtrl.unfollowComedian
   );
+
+  
   router.get(
     "/followers/:id",
     authMiddleware.authorizeComedian,

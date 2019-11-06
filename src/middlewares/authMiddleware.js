@@ -3,19 +3,6 @@ const validator = require("../validators");
 const {verifyToken} = require('../utils/JWT')
 
 
-exports.authenticate = (req, res, next) => {
-  //Logic for authentication goes in here 
-  const schema = {
-    username: joi.string().min(3),
-    password: joi.string()
-  };
-  const result = validator(req.body, schema);
-  if (result)
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid input", error: result });
-  next();
-};
 
 exports.authorizeViewer = (req, res, next) => {
   //Logic fot authorization goes in here
@@ -73,7 +60,7 @@ exports.authorizeAll = (req, res, next) => {
       return res.status(401).json({success: false, message: 'Access denied!!', error : err.message})
     })
 }
-exports.signUp = (req, res, next) => {
+exports.signUpValidator = (req, res, next) => {
   const schema = {
     name: joi.string().min(3).required(),
     username: joi.string().min(3).required(),
@@ -82,10 +69,24 @@ exports.signUp = (req, res, next) => {
     password: joi.string().required(),
     preference: joi.string()
   };
-  const result = validator(req.body, schema);
-  if (result)
+  const result = joi.validate(req.body, schema);
+  if (result.error)
     return res
       .status(400)
-      .json({ success: false, message: "Invalid input", error: result });
+      .json({ success: false, message: "Invalid input", error: result.error.message});
+  next();
+};
+
+exports.signInValidator = (req, res, next) => {
+  //Logic for authentication goes in here 
+  const schema = {
+    username: joi.string().min(3),
+    password: joi.string()
+  };
+  const result = joi.validate(req.body, schema);
+  if (result.error)
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid input", error: result.error.message });
   next();
 };

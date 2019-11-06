@@ -6,10 +6,11 @@ const router = require("express").Router();
 module.exports = function() {
   const authCtrl = new authController();
 
-  router.post("/register", authMiddleware.signUp, authCtrl.register);
+  router.post("/register", authMiddleware.signUpValidator, authCtrl.register);
   
   router.post(
     "/authenticate",
+    authMiddleware.signInValidator, 
     authCtrl.authenticate
   );
 

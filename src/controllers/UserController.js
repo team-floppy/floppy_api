@@ -1,4 +1,5 @@
 const userService = require("../services/UserService");
+const comedianService = require("../services/comedianServices")
 const { getProfile } = require("../utils/gridfsStream");
 
 module.exports = function userController() {
@@ -31,7 +32,7 @@ module.exports = function userController() {
   this.followComedian = function(req, res) {
     const user = req.user;
     const comedianId = req.params.id;
-    userService
+    comedianService
       .followComedian(user.id, comedianId)
       .then(data => res.status(200).json(data))
       .catch(err => res.status(500).json(err));
@@ -39,7 +40,7 @@ module.exports = function userController() {
   this.unfollowComedian = function(req, res){
     const user = req.user;
     const comedianId = req.params.id;
-    userService
+    comedianService
       .unfollowComedian(comedianId, user.id)
       .then(data => res.status(200).json(data))
       .catch(err => res.status(500).json(err))
@@ -47,9 +48,19 @@ module.exports = function userController() {
 
   this.getFollowers = function(req, res) {
     const comedianId = req.params.id;
-    userService
+    comedianService
       .getFollowers(comedianId)
       .then(data => res.status(200).json(data))
       .catch(err => res.status(500).json(err));
+  };
+
+  this.bookComedian = function(req, res){
+    const comedianId = req.params.id; 
+    const user = req.user;
+    const bookDetails = req.body;
+    comedianService
+      .bookComedian(user.id, comedianId, bookDetails)
+      .then(data => res.status(200).json({data}))
+      .catch(err => res.status(500).json(err))
   };
 };
