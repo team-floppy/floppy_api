@@ -1,6 +1,7 @@
 const model = require("../models/user");
 const followModel = require("../models/follow");
 const bookModel = require("../models/book");
+const {sendBookMail} = require('../utils/mails/sendBookmail')
 
 
 function followComedian(followerId, IdOfComedian) {
@@ -118,16 +119,12 @@ function followComedian(followerId, IdOfComedian) {
                 resolve({success: false, message: "User have not yet followed the comedian"})
               }
             }).catch(err => {
-              console.log("ERROR----------------------")
-              console.error(err)
               reject({success: false, message: "There was an error tring to unfollow this comedian 2"})
             })
           }else{
             resolve({success: false, message: "Comedian does not exist"})
           }
         }).catch(err => {
-          console.log("ERROR----------------------")
-          console.error(err)
           reject({success: false, message: "There was an error trying to unfollow this comedian 3",})
         })
       }
@@ -168,9 +165,9 @@ function followComedian(followerId, IdOfComedian) {
   
   exports.getFollowers = getFollowers;
   
-  function bookComedian(bookerId, comedianId, bookDetails){
+  function bookComedian(booker, comedianId, bookDetails){
     return new Promise((resolve, reject) => {
-      if(!bookerId ||  !comedianId ||  !bookDetails){
+      if(!booker ||  !comedianId ||  !bookDetails){
         resolve({success: false, message: "Invalid inputs"});
       }else{
         model.findById(comedianId)
@@ -180,18 +177,20 @@ function followComedian(followerId, IdOfComedian) {
                     .then(comedian => {
                         if(comedian){
                             comedian.books.push({
-                                bookerId: bookerId, 
+                                bookerId: booker.id, 
                                 workType: bookDetails.workType,
                                 description: bookDetails.description
                             })
-                            comedian.save();
+                            comedian.save().then(val => {
+                              sendBookMail(value, booker, bookDetails)
+                            })
                             resolve({success: true, message : "Comedian have been booked successfully"})
                         }else{
                             let book = new  bookModel({
                                 comedian : comedianId, 
                                 books: [
                                     {
-                                        bookerId: bookerId,
+                                        bookerId: booker.id,
                                         workType: bookDetails.workType, 
                                         description: bookDetails.description
                                     }

@@ -59,8 +59,8 @@ module.exports = function userController() {
     const user = req.user;
     const bookDetails = req.body;
     comedianService
-      .bookComedian(user.id, comedianId, bookDetails)
-      .then(data => res.status(200).json({data}))
+      .bookComedian(user, comedianId, bookDetails)
+      .then(data => res.status(200).json(data))
       .catch(err => res.status(500).json(err))
   };
 };

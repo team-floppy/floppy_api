@@ -1,6 +1,6 @@
 const model = require("../models/user");
 const bcrypt = require("bcryptjs");
-const { sendMail } = require("../utils/sendemail");
+const { sendMail } = require("../utils/mails/sendVerifyMail");
 const { generateToken, verifyToken } = require("../utils/JWT");
 
 exports.RegisterUser = Options => {
