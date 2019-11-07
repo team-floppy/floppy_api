@@ -9,6 +9,12 @@ module.exports = function() {
   const userCtrl = new userController();
 
   /**Upload profile picture route */
+  router.put(
+    "/editProfile",
+    userMiddleware.validateEditProfile,
+    authMiddleware.authorizeViewer,
+    userCtrl.editProfile
+  );
   router.post(
     "/upload/avatar",
     authMiddleware.authorizeAll,
@@ -25,7 +31,6 @@ module.exports = function() {
     authMiddleware.authorizeAll,
     userCtrl.followComedian
   );
-
   router.put(
     "/unfollow/:id",
     authMiddleware.authorizeAll,
@@ -43,6 +48,5 @@ module.exports = function() {
     authMiddleware.authorizeAll,
     userCtrl.bookComedian
   );
-
   return router;
 };

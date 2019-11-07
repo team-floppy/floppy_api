@@ -9,14 +9,14 @@ exports.sendMail = (userDetails, token) => {
       port: 465,
       secure: true,
       auth: {
-        user: "vicman_854@zohomail.com",
-        pass: "cQQV9ku2AeX4"
+        user: "chimbosko@zohomail.com",
+        pass: "YTpgXYdTPEK2"
       }
     });
 
     transport.sendMail(
       {
-        from: "vicman_854@zohomail.com",
+        from: "chimbosko@zohomail.com",
         to: userDetails.email,
         subject: `Welcome  ${userDetails.name} please verify your account`,
         text: `Your Floppy verification code is: ${userDetails.verificationCode}`,

@@ -62,4 +62,25 @@ function getProfilePicture(id) {
 
 exports.getProfilePicture = getProfilePicture;
 
+function editProfile(userEmail, role, preference){
+  return new Promise((resolve, reject) => {
+    model
+  .findOne({email:userEmail})
+    .then(deUser => {
+      if(!deUser){
+        resolve({success: false, message: "User does not exist"})
+      }else{
+        console.log(preference)
+        deUser.preference = preference;
+        deUser.role = role;
+        deUser.save();
+        resolve({success: true, message: "Profie have been updated successfully"})
+      }
+    }).catch(err => {
+      reject({success: false, message: "There was an error trying to update the user's profile", error: err})
+    })
+  })
+}
+
+exports.editProfile = editProfile;
 

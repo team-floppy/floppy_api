@@ -63,4 +63,13 @@ module.exports = function userController() {
       .then(data => res.status(200).json(data))
       .catch(err => res.status(500).json(err))
   };
+
+  this.editProfile = function(req, res){
+    const user = req.user;
+    const {role, preference} = req.body;
+    userService
+      .editProfile(user.email, role, preference)
+      .then(data => res.status(200).json(data))
+      .catch(err => res.status(500).json(err))
+  }
 };
