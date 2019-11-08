@@ -199,7 +199,6 @@ function followComedian(followerId, IdOfComedian) {
                             book.save().then(val => {
                                 resolve({success: true, message: "Comedian have been booked successfully"})
                             }).catch(err => {
-                                console.log(err)
                                 reject({success: false, message: "There was an error trying to book this comedian 1"})
                             })
                         }
