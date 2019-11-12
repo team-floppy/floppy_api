@@ -92,12 +92,6 @@ function authenticateuser(username, password) {
           if (!user) {
             resolve({ success: false, message: "user not found " });
           } else {
-            if (user.verified == false) {
-              resolve({
-                success: false,
-                message: "Please Verify your account "
-              });
-            } else {
               const validPassword = bcrypt.compareSync(password, user.password);
               if (validPassword) {
                 getUserDetail(user).then(userdetail => {
@@ -124,7 +118,6 @@ function authenticateuser(username, password) {
                   message: "incorrect email or password"
                 });
               }
-            }
           }
         })
         .catch(err => {
@@ -144,7 +137,8 @@ function getUserDetail(user) {
           email: data.email,
           username: data.username,
           id: data._id,
-          role: data.role
+          role: data.role,
+          verified: data.verified
         };
         resolve(specificUserDetail);
       })
