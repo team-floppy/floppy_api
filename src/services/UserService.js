@@ -2,6 +2,7 @@ const model = require("../models/user");
 const { deleteOne, getProfile } = require("../utils/gridfsStream");
 
 function uploadProfilePic(fileDetails) {
+  console.log(fileDetails)
   return new Promise((resolve, reject) => {
     if (!fileDetails) {
       reject({ success: false, message: "Unable to update Profile picture", err: "No file details is provided" });
@@ -10,7 +11,7 @@ function uploadProfilePic(fileDetails) {
         { email: fileDetails.email },
         { profilePic: fileDetails.filename, profilePicID: fileDetails.id },
         (err, updated) => {
-          if (err) {
+          if (err || !updated) {
             reject({
               success: false,
               message: "error updating profile picture mongoose"
